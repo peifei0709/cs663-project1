@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restricted Area | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Demo &amp; Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+<div class="page-shell"><main>
+<div class="voice-box" aria-label="Page narration controls">
+<button type="button" data-read-page>▶ Listen to this page</button>
+<button type="button" class="secondary" data-stop-reading>■ Stop</button>
+<span>Browser text-to-speech is included so every tutorial page has a voice option.</span>
+</div>
+
+<span class="kicker">Part 2</span>
+<h2>Restricted-Area Detection</h2>
+<p class="lead">A restricted area is not something YOLO learns automatically. It is a spatial rule defined by the application. The most flexible design is to let the user draw a polygon over the camera image and then test whether the tracked pet is inside it.</p>
+
+<h3>1. Define the area</h3>
+<p>Region-of-interest intrusion detection has been studied in surveillance systems. Chatterjee, Singh, and Agarwal describe a YOLOv8-based physical intrusion system built around a region of interest.<a class="cite" href="bibliography.html#ref1">[1]</a> For a pet application, the object class changes from a person or general intruder to a pet, but the spatial concept is similar.</p>
+<p>A simple polygon can be stored as a list of image coordinates:</p>
+<pre><code>restricted_zone = [
+    (690, 140),
+    (1020, 120),
+    (1060, 410),
+    (660, 430)
+]</code></pre>
+<p>The coordinates are tied to the camera view. If the camera moves, the polygon may no longer match the real physical area, so the zone should be recalibrated.</p>
+
+<figure>
+<img src="images/restricted-zone.svg" alt="Dog bounding box and a polygon restricted area with bottom-center point">
+<figcaption>Figure 3. Example of a polygon restricted area. The bottom-center of the pet's box is used as an approximate floor-contact point. Diagram created by the author.</figcaption>
+</figure>
+
+<h3>2. Choose a representative point for the pet</h3>
+<p>The center of a bounding box is easy to compute, but for a zone drawn on the floor, the <strong>bottom-center</strong> can be more meaningful because it is closer to where the animal touches the ground.</p>
+<pre><code>pet_x = (x1 + x2) / 2
+pet_y = y2
+pet_point = (pet_x, pet_y)</code></pre>
+<p>This is still an approximation. A bounding box is a 2D rectangle around a 3D animal, so perspective and posture can affect the point. A more advanced system could use segmentation or pose estimation to estimate the paws or body contact area.</p>
+
+<h3>3. Test whether the point is inside the polygon</h3>
+<p>A point-in-polygon test returns whether the pet point is inside, outside, or on the edge of the zone. In an OpenCV implementation, this can be done with <span class="inline-code">cv2.pointPolygonTest()</span>.</p>
+<pre><code>inside = cv2.pointPolygonTest(
+    restricted_zone_contour,
+    pet_point,
+    False
+)
+
+if inside &gt;= 0:
+    print("Pet is inside the restricted area")</code></pre>
+
+<h3>4. Add tracking and dwell time</h3>
+<p>This is where tracking becomes more important than a one-frame detector. The application can create a timer for each track ID. If pet ID #3 enters the zone, the timer starts. If the pet leaves, the timer resets or the event is closed.</p>
+<pre><code>if inside_zone[pet_id]:
+    if pet_id not in entry_time:
+        entry_time[pet_id] = current_time
+
+    dwell_time = current_time - entry_time[pet_id]
+
+    if dwell_time &gt;= 2.0:
+        send_alert(pet_id, dwell_time)
+else:
+    entry_time.pop(pet_id, None)</code></pre>
+<p>A dwell threshold can reduce alerts caused by a pet briefly crossing the zone boundary. The exact threshold should depend on the application. For example, a dangerous area might require an immediate warning, while a sofa-monitoring application might wait a few seconds.</p>
+
+<figure>
+<img src="images/alert-logic.svg" alt="Tracking, zone test, dwell time, and alert flow">
+<figcaption>Figure 4. Proposed restricted-area event logic. Diagram created by the author.</figcaption>
+</figure>
+
+<h3>5. What should an alert contain?</h3>
+<div class="grid-2">
+<div class="card"><h4>Minimum event data</h4><p>Pet track ID, time of entry, time in the zone, camera name, and optionally a saved frame.</p></div>
+<div class="card"><h4>Useful anti-spam rules</h4><p>Dwell threshold, cooldown period after an alert, and one alert per continuous entry instead of one alert per frame.</p></div>
+</div>
+
+<h3>Restricted-area algorithm</h3>
+<p>The full algorithm can be summarized as:</p>
+<pre><code>INPUT: video, polygon zone Z, dwell threshold T
+
+for each video frame:
+    detect pets
+    update tracker
+
+    for each tracked pet i:
+        p = bottom-center of bounding box
+
+        if p is inside Z:
+            if i has no entry time:
+                store current time as entry time
+
+            if current time - entry time[i] &gt;= T:
+                create alert
+        else:
+            clear entry time for i</code></pre>
+
+<h3>Why this goes beyond YOLO</h3>
+<p>The detector only answers whether a pet is visible and where its box is. The restricted-area system adds three separate ideas: <strong>persistent identity</strong> from tracking, <strong>geometry</strong> from point-in-polygon testing, and <strong>time</strong> from dwell measurement. That is why a complete restricted-area monitor cannot be described as “YOLO detects the restricted area.” The area is defined by the user or application, and the system reasons about the tracked pet's position relative to it.</p>
+
+<div class="callout"><strong>Practical example:</strong> The owner draws a polygon around the kitchen counter area. The system sees dog ID #3, tracks it toward the polygon, detects that its bottom-center point enters the zone, waits two seconds, and then creates one alert. When the dog leaves, the event ends.</div>
+
+<div class="page-links"><a href="tracking.html">← Detection &amp; Tracking</a><a href="behavior.html">Next: Behavior Recognition →</a></div>
+
+</main></div>
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+
+</body>
+</html>

@@ -1,51 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Behavior Monitoring</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Demo &amp; Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+<div class="page-shell"><main>
+<div class="voice-box" aria-label="Page narration controls">
+<button type="button" data-read-page>▶ Listen to this page</button>
+<button type="button" class="secondary" data-stop-reading>■ Stop</button>
+<span>Browser text-to-speech is included so every tutorial page has a voice option.</span>
+</div>
 
-    <header>
-        <h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
-        <p>CS663 Project 1 - Fei Pei</p>
-    </header>
+<span class="kicker">Research Tutorial</span>
+<h2>Introduction and Problem Definition</h2>
+<p class="lead">Pet owners cannot always watch their pets when they are away from home. A camera-based system can help by detecting a pet, following its movement, recognizing basic behavior, and warning the owner when the pet enters a place that should be avoided.</p>
+<p>This tutorial focuses on <strong>dogs as the main case study</strong>, while also discussing research on domestic cats where it helps explain multi-animal tracking. The key idea is that a useful monitoring system needs more than object detection. A detector can locate a pet in one frame, but a complete system must also keep the pet's identity across frames, compare its position with a user-defined restricted zone, and use temporal information to recognize behavior.</p>
+<p>Region-of-interest intrusion systems show that an object detector can be combined with a defined monitored area to determine whether an object has entered that area.<a class="cite" href="bibliography.html#ref1">[1]</a> For pet monitoring, the same general idea can be adapted from people or security targets to dogs and cats.</p>
 
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="tracking.html">Detection & Tracking</a>
-        <a href="restricted-area.html">Restricted Area</a>
-        <a href="behavior.html">Behavior Recognition</a>
-        <a href="limitations.html">Challenges</a>
-        <a href="demo.html">Demo & Quiz</a>
-        <a href="bibliography.html">References</a>
-    </nav>
+<figure>
+<img src="images/system-pipeline.svg" alt="Pipeline from camera video to detection, tracking, zone analysis, behavior recognition, and alert">
+<figcaption>Figure 1. Proposed pet-monitoring pipeline. Diagram created by the author from the research concepts reviewed in this tutorial.</figcaption>
+</figure>
 
-    <main>
-        <h2>Introduction</h2>
+<h3>What problem is this tutorial solving?</h3>
+<div class="grid-3">
+<div class="card"><h4>1. Where is the pet?</h4><p>Object detection finds a dog or cat and returns a bounding box around it.</p></div>
+<div class="card"><h4>2. Is it the same pet?</h4><p>Object tracking connects detections over time and assigns a persistent track ID.</p></div>
+<div class="card"><h4>3. What is the pet doing?</h4><p>Behavior recognition uses appearance and motion across frames to classify actions such as walking, sitting, running, or lying down.</p></div>
+</div>
 
-        <p>
-            Pet owners cannot always monitor their pets when they are away from home.
-            Computer vision can help detect pets, track their movement, recognize
-            behaviors, and identify when they enter restricted areas.
-        </p>
+<h3>Restricted-area concept</h3>
+<p>A <strong>restricted area</strong> in this tutorial is a virtual polygon drawn over the camera image. It could represent a kitchen counter, a sofa, a doorway, a room entrance, or another place where the owner does not want the pet to remain. The system compares the tracked pet's image coordinates with this polygon. If the pet enters the polygon and stays there longer than a chosen time, the system can create an alert.</p>
+<div class="callout"><strong>Main design decision:</strong> YOLO is used for detection, not as the entire solution. Tracking, spatial zone logic, and behavior recognition are separate components. This directly addresses the difference between simply finding a pet and understanding what it is doing over time.</div>
 
-        <h2>System Overview</h2>
+<h3>Learning objectives</h3>
+<p>After completing this tutorial, a reader should be able to explain the difference between detection and tracking, describe how a polygon can represent a restricted area, understand why temporal models are useful for behavior recognition, compare several research approaches, and identify common limitations such as poor lighting, occlusion, fast motion, multiple pets, and mobile-device processing limits.</p>
 
-        <p>
-            This tutorial explains how object detection, object tracking,
-            spatial analysis, and behavior recognition can work together
-            to create a pet monitoring system.
-        </p>
+<div class="page-links"><span></span><a href="tracking.html">Next: Detection &amp; Tracking →</a></div>
 
-    </main>
-
-    <footer>
-        <p>CS663 Computer Vision - Project 1</p>
-    </footer>
+</main></div>
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Challenges & Limitations | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Demo &amp; Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+<div class="page-shell"><main>
+<div class="voice-box" aria-label="Page narration controls">
+<button type="button" data-read-page>▶ Listen to this page</button>
+<button type="button" class="secondary" data-stop-reading>■ Stop</button>
+<span>Browser text-to-speech is included so every tutorial page has a voice option.</span>
+</div>
+
+<span class="kicker">Part 4</span>
+<h2>Successes, Challenges, and Limitations</h2>
+<p class="lead">Research results show that pet detection, tracking, and behavior recognition are possible, but a home system still has to deal with uncontrolled lighting, furniture, camera angle, fast movement, similar-looking pets, and limited computing power.</p>
+
+<figure>
+<img src="images/challenges.svg" alt="Five common challenges: poor lighting, occlusion, fast motion, multiple pets, camera angle">
+<figcaption>Figure 6. Common failure cases for camera-based pet monitoring. Diagram created by the author.</figcaption>
+</figure>
+
+<h3>Poor lighting and environmental change</h3>
+<p>Object detectors depend on visible image features. Low luminance, indoor conditions, and other environmental changes can reduce confidence or cause missed detections. In a 2025 intrusion-detection study, Sodhro, Kannam, and Jensen compared YOLOv5 and YOLOv8 across indoor, outdoor, luminance, and simulated weather conditions and found that performance changed with the environment.<a class="cite" href="bibliography.html#ref9">[9]</a> Although their target was human intrusion rather than pets, the result is relevant because the same basic problem occurs when a home camera receives darker or noisier images.</p>
+
+<h3>Occlusion</h3>
+<p>Furniture, people, blankets, tables, and doorways can hide part or all of a pet. Detection can fail, and tracking can temporarily lose the track. If the pet reappears, the tracker may assign a new ID. This is especially important if the system is measuring how long the pet stayed in a restricted area.</p>
+
+<h3>Multiple pets and identity switches</h3>
+<p>Two dogs or cats can look very similar. If they cross paths, a tracker may swap their IDs. The domestic-cat tracking study by Nakajima and colleagues is useful here because it specifically considers multiple animals and shows that fine-tuning on pet-specific data can improve tracking.<a class="cite" href="bibliography.html#ref3">[3]</a></p>
+
+<h3>Breed, size, and posture variation</h3>
+<p>Dogs vary strongly in size, coat, body proportions, and behavior. A model trained on one breed or a small number of animals may not generalize to all pets. Kim and Moon note that their study used one dog and that future data collection should include breed and size variation.<a class="cite" href="bibliography.html#ref4">[4]</a> This is an important limitation when interpreting reported accuracy.</p>
+
+<h3>Camera angle and zone calibration</h3>
+<p>A virtual polygon is defined in image coordinates. If the camera is moved, bumped, zoomed, or rotated, the polygon no longer represents the same physical place. A practical app should therefore include an easy zone-calibration step and perhaps save different zones for different cameras.</p>
+
+<h3>Real-time processing on mobile or edge devices</h3>
+<p>A complete system may run detection, tracking, behavior recognition, drawing, event logging, and notifications. These tasks compete for CPU/GPU power, memory, and battery. A small detector may be faster but less accurate; a larger model may be more accurate but too slow for a phone or low-cost edge computer. The application therefore needs to choose a model size and frame rate that match the device.</p>
+
+<h3>False alerts</h3>
+<p>A one-frame rule can create unnecessary notifications. A pet might touch the boundary for a moment, or a bounding box might jump because of tracking noise. Dwell time, cooldown periods, and track history can make the alert logic more stable. However, longer dwell thresholds can also delay important alerts, so the threshold should depend on the risk of the area.</p>
+
+<h3>Privacy</h3>
+<p>Indoor cameras may capture people, conversations, or private living spaces. A privacy-aware implementation should process video locally when possible, minimize saved footage, clearly indicate when the camera is active, and avoid retaining more data than the feature needs.</p>
+
+<h3>Future research</h3>
+<div class="grid-2">
+<div class="card"><h4>Smaller models</h4><p>Use lightweight detection, tracking, and temporal models for phones, Raspberry Pi, or other edge devices.</p></div>
+<div class="card"><h4>Pet-specific fine-tuning</h4><p>Adapt general models using more breeds, camera angles, lighting conditions, and multi-pet scenes.</p></div>
+<div class="card"><h4>Pose and segmentation</h4><p>Use pet keypoints or masks instead of only bounding boxes to estimate body position more precisely.</p></div>
+<div class="card"><h4>Adaptive alerts</h4><p>Combine location, dwell time, behavior, time of day, and owner preferences to reduce unnecessary notifications.</p></div>
+</div>
+
+<div class="callout"><strong>Overall conclusion:</strong> The strongest design is a pipeline rather than a single model: detection locates the pet, tracking maintains identity, spatial logic checks the restricted area, temporal models recognize behavior, and application rules decide when an alert is meaningful.</div>
+
+<div class="page-links"><a href="behavior.html">← Behavior Recognition</a><a href="demo.html">Next: Demo &amp; Quiz →</a></div>
+
+</main></div>
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+
+</body>
+</html>

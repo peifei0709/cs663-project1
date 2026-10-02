@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Behavior Recognition | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Demo &amp; Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+<div class="page-shell"><main>
+<div class="voice-box" aria-label="Page narration controls">
+<button type="button" data-read-page>▶ Listen to this page</button>
+<button type="button" class="secondary" data-stop-reading>■ Stop</button>
+<span>Browser text-to-speech is included so every tutorial page has a voice option.</span>
+</div>
+
+<span class="kicker">Part 3</span>
+<h2>Pet Behavior Recognition</h2>
+<p class="lead">Behavior recognition is different from object detection. A dog can be detected in one image, but many behaviors are defined by movement over time. For this reason, video and temporal models are important.</p>
+
+<h3>Why a single frame is limited</h3>
+<p>Some postures, such as sitting or lying down, may be recognizable from one image. Other behaviors, such as walking, sniffing, running, pacing, or repetitive abnormal movement, depend on changes across multiple frames. A single still image may capture only one moment and lose the motion pattern.</p>
+<p>Kim and Moon studied dog behavior recognition using both camera video and wearable sensor data. Their system recognized seven behaviors and compared several detection and fusion methods. They reported their best result using a CNN-LSTM fusion model with YOLOv4-based video detection, reaching about 93.4% accuracy in their study setting.<a class="cite" href="bibliography.html#ref4">[4]</a></p>
+
+<figure>
+<img src="images/behavior-pipeline.svg" alt="Video clip to visual features, temporal features, and behavior label">
+<figcaption>Figure 5. A simple temporal behavior-recognition pipeline. Diagram created by the author.</figcaption>
+</figure>
+
+<h3>CNN: learning visual appearance</h3>
+<p>A convolutional neural network (CNN) learns visual features from images. For pet behavior, these features may capture body shape, posture, orientation, and local visual patterns. Nolasco, Aldea, and Villaverde used an InceptionV3-based CNN to classify dog activities such as sitting, standing, and lying down on a Raspberry Pi platform; their reported test accuracy was 88% on a 50-sample test set.<a class="cite" href="bibliography.html#ref6">[6]</a></p>
+<p>This type of image classifier is attractive for small edge devices because it can be simpler than a full video model. The limitation is that it does not directly model long temporal patterns.</p>
+
+<h3>LSTM and temporal modeling</h3>
+<p>An LSTM is a recurrent neural network designed to use information across a sequence. Instead of treating every frame independently, it can learn how features change over time. This makes it useful when the difference between two behaviors depends on movement, duration, or ordering.</p>
+<p>Atif and colleagues built a dog health and welfare monitoring system that first detected and cropped dog image sequences, then used a two-stream EfficientNetV2 design for appearance and optical-flow motion features, followed by an LSTM for behavior recognition. They reported an average F1 score of 0.955 for behavior recognition in their experiments.<a class="cite" href="bibliography.html#ref5">[5]</a></p>
+
+<h3>Multimodal behavior recognition</h3>
+<p>Camera data can be combined with wearable sensors. Kim and Moon used accelerometer and gyroscope information together with video. The motivation is that one source can help when the other is noisy. For example, a camera may have trouble when furniture blocks the pet, while a wearable sensor can still measure movement. On the other hand, a camera provides contextual information that a collar sensor does not show.<a class="cite" href="bibliography.html#ref4">[4]</a></p>
+
+<h3>Recent research direction: deeper temporal context</h3>
+<p>A 2025 survey by Fazzari and colleagues divides deep-learning animal behavior approaches into pose-estimation and non-pose-estimation families and discusses recurrent, convolutional, and other methods for sequence analysis.<a class="cite" href="bibliography.html#ref7">[7]</a> This broader review shows that there is no single universal method for all animal behavior tasks.</p>
+<p>More recent canine research also emphasizes time. Guo and colleagues introduced TP-CanineNet for abnormal behavior detection in dogs left alone at home. Their model was designed to capture local and global temporal dependencies and reported a frame-level AUC of 85.19% and AP of 72.55% on their Alone-Dog dataset.<a class="cite" href="bibliography.html#ref8">[8]</a></p>
+
+<h3>Comparison of approaches</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Approach</th><th>What it uses</th><th>Strength</th><th>Limitation</th></tr></thead>
+<tbody>
+<tr><td>Image CNN</td><td>One image or cropped frame</td><td>Simple and relatively efficient</td><td>Weak for behaviors defined mainly by motion</td></tr>
+<tr><td>CNN + LSTM</td><td>Visual features over a sequence</td><td>Models appearance and time</td><td>More computation and labeled video needed</td></tr>
+<tr><td>Two-stream video</td><td>RGB appearance + motion/optical flow</td><td>Explicit motion information</td><td>Extra processing for the motion stream</td></tr>
+<tr><td>Camera + wearable</td><td>Video + accelerometer/gyroscope</td><td>Two data sources can complement each other</td><td>Requires the pet to wear hardware</td></tr>
+<tr><td>Temporal anomaly model</td><td>Longer video context</td><td>Can focus on unusual patterns</td><td>Abnormal behavior labels are difficult to collect</td></tr>
+</tbody></table></div>
+
+<h3>How behavior recognition fits the proposed system</h3>
+<p>The restricted-area module and the behavior module answer different questions. The restricted-area module asks <em>where</em> the pet is. The behavior module asks <em>what</em> the pet is doing. They can be combined to create more useful events. For example:</p>
+<pre><code>IF dog enters kitchen zone
+AND behavior = "jumping / standing up"
+FOR more than 2 seconds
+THEN create high-priority alert</code></pre>
+<p>This is more informative than a single object-detection result. It also shows why YOLO should not be described as the behavior detector by itself.</p>
+
+<div class="page-links"><a href="restricted-area.html">← Restricted Area</a><a href="limitations.html">Next: Challenges →</a></div>
+
+</main></div>
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+
+</body>
+</html>

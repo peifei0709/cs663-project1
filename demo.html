@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo & Quiz | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Demo &amp; Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+<div class="page-shell"><main>
+<div class="voice-box" aria-label="Page narration controls">
+<button type="button" data-read-page>▶ Listen to this page</button>
+<button type="button" class="secondary" data-stop-reading>■ Stop</button>
+<span>Browser text-to-speech is included so every tutorial page has a voice option.</span>
+</div>
+
+<span class="kicker">Interactive Activity</span>
+<h2>Restricted-Area Demo and Quiz</h2>
+<p class="lead">This page demonstrates the main restricted-area logic without running a real neural network in the browser. The pet marker represents a tracked dog with ID #3.</p>
+
+<h3>Interactive zone demo</h3>
+<div class="demo-panel">
+<div id="zone-demo" aria-label="Interactive restricted area demo">
+<div id="restricted-zone"></div>
+<div id="pet-marker" role="img" aria-label="dog marker">🐕</div>
+</div>
+<div class="demo-status" id="demo-status">Pet ID #3 is outside the restricted area.</div>
+<p>Dwell time inside zone: <strong><span id="dwell-time">0.0</span> seconds</strong></p>
+<div class="demo-controls">
+<button id="move-inside" type="button" class="danger">Move pet into zone</button>
+<button id="move-outside" type="button" class="success">Move pet outside</button>
+<button id="reset-demo" type="button" class="secondary">Reset</button>
+</div>
+</div>
+<p>When the marker enters the red zone, the timer begins. After two seconds, the page creates an alert. This is the same event logic described in the Restricted Area section: tracking ID + zone test + dwell time.</p>
+
+<h3>Knowledge check</h3>
+<form id="quiz-form">
+<div class="quiz-question"><p>1. What is the main difference between detection and tracking?</p>
+<label><input type="radio" name="q1" value="a"> Detection always needs video, while tracking only needs one image.</label>
+<label><input type="radio" name="q1" value="b"> Tracking maintains an object's identity across frames.</label>
+<label><input type="radio" name="q1" value="c"> Tracking does not use bounding boxes.</label></div>
+
+<div class="quiz-question"><p>2. In this tutorial, how is a restricted area represented?</p>
+<label><input type="radio" name="q2" value="a"> As a new YOLO object class.</label>
+<label><input type="radio" name="q2" value="b"> As a text label attached to the dog.</label>
+<label><input type="radio" name="q2" value="c"> As a polygon in image coordinates.</label></div>
+
+<div class="quiz-question"><p>3. Why can dwell time be useful?</p>
+<label><input type="radio" name="q3" value="a"> It increases image resolution.</label>
+<label><input type="radio" name="q3" value="b"> It can reduce alerts caused by a very brief zone crossing.</label>
+<label><input type="radio" name="q3" value="c"> It replaces object tracking.</label></div>
+
+<div class="quiz-question"><p>4. Why is YOLO alone not enough for behavior recognition?</p>
+<label><input type="radio" name="q4" value="a"> YOLO cannot process images.</label>
+<label><input type="radio" name="q4" value="b"> YOLO can only be used outdoors.</label>
+<label><input type="radio" name="q4" value="c"> Many behaviors depend on motion and temporal information across frames.</label></div>
+
+<div class="quiz-question"><p>5. Which problem can cause a tracker to confuse two pets?</p>
+<label><input type="radio" name="q5" value="a"> Similar appearance and crossing paths.</label>
+<label><input type="radio" name="q5" value="b"> A perfectly fixed camera with one pet.</label>
+<label><input type="radio" name="q5" value="c"> A bibliography page.</label></div>
+
+<button type="submit">Check my answers</button>
+<div class="quiz-result" id="quiz-result" aria-live="polite"></div>
+</form>
+
+<h3>Short review</h3>
+<div class="callout"><strong>Remember the pipeline:</strong> detect the pet → track the pet → calculate its position → compare with the restricted polygon → measure dwell time → recognize behavior if needed → alert the owner.</div>
+
+<div class="page-links"><a href="limitations.html">← Challenges</a><a href="bibliography.html">Next: References →</a></div>
+
+</main></div>
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+<script src="js/demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>References | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Demo &amp; Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+<div class="page-shell"><main>
+<div class="voice-box" aria-label="Page narration controls">
+<button type="button" data-read-page>▶ Listen to this page</button>
+<button type="button" class="secondary" data-stop-reading>■ Stop</button>
+<span>Browser text-to-speech is included so every tutorial page has a voice option.</span>
+</div>
+
+<span class="kicker">Annotated Bibliography</span>
+<h2>References</h2>
+<p class="lead">The references below are listed in the order they first appear in the tutorial. Each entry includes a short synopsis and a reliability note, as required for the project.</p>
+
+<section class="ref-entry" id="ref1">
+<h3>[1] Chatterjee, N., Singh, A. V., &amp; Agarwal, R. (2024)</h3>
+<p><strong>“You Only Look Once (YOLOv8) Based Intrusion Detection System for Physical Security and Surveillance.”</strong> 2024 11th International Conference on Reliability, Infocom Technologies and Optimization (ICRITO). IEEE. DOI: 10.1109/ICRITO61523.2024.10522139.</p>
+<p><a href="https://doi.org/10.1109/ICRITO61523.2024.10522139" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> This paper presents a YOLOv8-based physical intrusion system using a region-of-interest approach. It is useful for this tutorial because it directly supports the idea that object detection can be combined with a defined monitored area rather than treating YOLO as the full restricted-area solution.</p>
+<p><strong>Reliability:</strong> <span class="rating">High.</span> It is a peer-reviewed IEEE conference publication and directly discusses region-based intrusion detection.</p>
+</section>
+
+<section class="ref-entry" id="ref2">
+<h3>[2] Wang, Y., &amp; Mariano, V. Y. (2024)</h3>
+<p><strong>“A Multi Object Tracking Framework Based on YOLOv8s and ByteTrack Algorithm.”</strong> IEEE Access, 12, 120711–120719. DOI: 10.1109/ACCESS.2024.3450370.</p>
+<p><a href="https://doi.org/10.1109/ACCESS.2024.3450370" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> The authors combine a YOLOv8s-based detector with ByteTrack for multi-object tracking. The paper helps explain why detection and tracking are separate steps and why a tracker is needed to maintain identity across video frames.</p>
+<p><strong>Reliability:</strong> <span class="rating">High.</span> IEEE Access is a peer-reviewed journal, and the article provides an evaluated tracking framework.</p>
+</section>
+
+<section class="ref-entry" id="ref3">
+<h3>[3] Nakajima, N., Koyasu, H., Maruno, Y., Nagasawa, M., Kikusui, T., &amp; Kubo, T. (2024)</h3>
+<p><strong>“Development of deep multi-animal tracking for domestic cats toward future application to social behavior analysis.”</strong> Advanced Robotics, 38(14), 958–966. DOI: 10.1080/01691864.2024.2384423.</p>
+<p><a href="https://doi.org/10.1080/01691864.2024.2384423" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> This study focuses on tracking multiple domestic cats and reports that fine-tuning YOLO with pet-specific video data improves tracking. It also discusses BoT-SORT. The work is directly relevant to multi-pet scenes and identity tracking.</p>
+<p><strong>Reliability:</strong> <span class="rating">High.</span> It is a peer-reviewed journal article with a pet-specific experimental setting and clearly described tracking goal.</p>
+</section>
+
+<section class="ref-entry" id="ref4">
+<h3>[4] Kim, J., &amp; Moon, N. (2022)</h3>
+<p><strong>“Dog Behavior Recognition Based on Multimodal Data from a Camera and Wearable Device.”</strong> Applied Sciences, 12(6), 3199. DOI: 10.3390/app12063199.</p>
+<p><a href="https://doi.org/10.3390/app12063199" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> The study combines camera video with accelerometer and gyroscope data and recognizes seven dog behaviors. It compares object detectors and deep-learning fusion models, including CNN, LSTM, and CNN-LSTM. It is useful for explaining why behavior recognition can require more information than object detection alone.</p>
+<p><strong>Reliability:</strong> <span class="rating">High, with scope limitations.</span> It is a peer-reviewed journal article, but the authors note that the experiment used one dog, so the reported performance should not be assumed to generalize to all breeds and environments.</p>
+</section>
+
+<section class="ref-entry" id="ref5">
+<h3>[5] Atif, O., Lee, J., Park, D., &amp; Chung, Y. (2023)</h3>
+<p><strong>“Behavior-Based Video Summarization System for Dog Health and Welfare Monitoring.”</strong> Sensors, 23(6), 2892. DOI: 10.3390/s23062892.</p>
+<p><a href="https://doi.org/10.3390/s23062892" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> This work creates a video monitoring pipeline that detects dogs, extracts image sequences, recognizes behavior using appearance and optical-flow features with an LSTM, and produces summaries for health and welfare monitoring. It is especially useful for the temporal behavior-recognition section.</p>
+<p><strong>Reliability:</strong> <span class="rating">High.</span> It is a peer-reviewed Sensors journal article with a detailed system and quantitative evaluation.</p>
+</section>
+
+<section class="ref-entry" id="ref6">
+<h3>[6] Nolasco, E., Jr., Aldea, A. C., &amp; Villaverde, J. (2025)</h3>
+<p><strong>“Dog Activity Recognition Using Convolutional Neural Network.”</strong> Engineering Proceedings, 92(1), 41. DOI: 10.3390/engproc2025092041.</p>
+<p><a href="https://doi.org/10.3390/engproc2025092041" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> The authors use a CNN/InceptionV3 approach on a Raspberry Pi platform to classify basic dog activities such as sitting, standing, and lying down. It provides a recent example of image-based activity recognition on edge hardware.</p>
+<p><strong>Reliability:</strong> <span class="rating">Moderate to high.</span> It is a published conference proceeding, but the reported test set is small, so the result should be treated as a focused demonstration rather than a universal benchmark.</p>
+</section>
+
+<section class="ref-entry" id="ref7">
+<h3>[7] Fazzari, E., Romano, D., Falchi, F., &amp; Stefanini, C. (2025)</h3>
+<p><strong>“Animal behavior analysis methods using deep learning: A survey.”</strong> Expert Systems with Applications, 289, 128330. DOI: 10.1016/j.eswa.2025.128330.</p>
+<p><a href="https://doi.org/10.1016/j.eswa.2025.128330" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> This survey reviews deep-learning methods for animal behavior analysis, including pose-based and non-pose-based approaches, datasets, benefits, limitations, and future research directions. It provides broader context beyond only dogs.</p>
+<p><strong>Reliability:</strong> <span class="rating">High.</span> It is a recent peer-reviewed survey in a major journal and synthesizes a large body of prior research.</p>
+</section>
+
+<section class="ref-entry" id="ref8">
+<h3>[8] Guo, X., Kong, X., Kong, C., Feng, J., &amp; Liu, Y. (2026)</h3>
+<p><strong>“TP-CanineNet: Temporal Context Contrastive Learning with Pseudo-Label Supervision for Abnormal Behavior Detection of Canine.”</strong> Animals, 16(13), 1997. DOI: 10.3390/ani16131997.</p>
+<p><a href="https://doi.org/10.3390/ani16131997" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> This recent study focuses on abnormal canine behavior when dogs are left alone at home. It uses temporal context modeling and weak supervision, making it highly relevant to the idea that behavior recognition depends on time and not just one detected frame.</p>
+<p><strong>Reliability:</strong> <span class="rating">High.</span> It is a 2026 peer-reviewed journal article with a clearly described dataset and quantitative evaluation.</p>
+</section>
+
+<section class="ref-entry" id="ref9">
+<h3>[9] Sodhro, A. H., Kannam, S., &amp; Jensen, M. (2025)</h3>
+<p><strong>“Real-time efficiency of YOLOv5 and YOLOv8 in human intrusion detection across diverse environments and recommendation.”</strong> Internet of Things, 33, 101707. DOI: 10.1016/j.iot.2025.101707.</p>
+<p><a href="https://doi.org/10.1016/j.iot.2025.101707" target="_blank" rel="noopener">Publisher / DOI link</a></p>
+<p><strong>Synopsis:</strong> This paper compares real-time YOLO intrusion detection under different luminance, indoor/outdoor, and simulated weather conditions. Although the target is people rather than pets, it provides evidence that visual detection performance changes with environmental conditions.</p>
+<p><strong>Reliability:</strong> <span class="rating">High for the environmental comparison.</span> It is a peer-reviewed 2025 journal article. Its results should be transferred to pet monitoring only as a general computer-vision limitation, not as a pet-specific accuracy result.</p>
+</section>
+
+<h3>Reference use in this tutorial</h3>
+<p>The pet-specific papers support the discussion of animal tracking and behavior recognition. The intrusion-detection papers support the restricted-zone concept and environmental challenges. These two research areas are combined here as a proposed pet-monitoring application; the tutorial does not claim that the human-surveillance studies directly measured pet performance.</p>
+
+<div class="page-links"><a href="demo.html">← Demo &amp; Quiz</a><a href="index.html">Back to Home ↑</a></div>
+
+</main></div>
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+
+</body>
+</html>

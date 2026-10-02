@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detection & Tracking | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Demo &amp; Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+<div class="page-shell"><main>
+<div class="voice-box" aria-label="Page narration controls">
+<button type="button" data-read-page>▶ Listen to this page</button>
+<button type="button" class="secondary" data-stop-reading>■ Stop</button>
+<span>Browser text-to-speech is included so every tutorial page has a voice option.</span>
+</div>
+
+<span class="kicker">Part 1</span>
+<h2>Pet Detection and Tracking</h2>
+<p class="lead">Detection answers <em>“Where is the pet in this frame?”</em> Tracking answers <em>“Is this the same pet I saw in the previous frames?”</em> A restricted-area monitor needs both.</p>
+
+<h3>Object detection</h3>
+<p>An object detector processes an image or video frame and predicts objects, class labels, confidence scores, and bounding boxes. YOLO-family detectors are popular because they are designed for fast, single-stage detection. In this project, the important output is the pet bounding box:</p>
+<pre><code>(x1, y1) ---------
+   |             |
+   |    DOG      |
+   |             |
+   --------- (x2, y2)</code></pre>
+<p>The bounding box provides a location in image coordinates. Detection alone, however, treats every frame as a new prediction. If the same dog appears in 100 frames, there may be 100 detections, but no built-in memory that they all belong to the same individual.</p>
+
+<figure>
+<img src="images/detection-vs-tracking.svg" alt="Comparison between object detection and object tracking">
+<figcaption>Figure 2. Detection finds an object in each frame; tracking links detections and preserves an ID across frames. Diagram created by the author.</figcaption>
+</figure>
+
+<h3>Why tracking is necessary</h3>
+<p>Wang and Mariano combined a YOLOv8-based detector with ByteTrack for multi-object tracking, showing the common design pattern of using a detector first and a tracker second.<a class="cite" href="bibliography.html#ref2">[2]</a> Tracking is especially important for restricted-area monitoring because the system may need to know when one specific pet entered a zone, how long that pet stayed there, and whether it later left.</p>
+<p>Research on domestic cats also shows why pet tracking is not always easy. Nakajima and colleagues reported that fine-tuning YOLO on their own domestic-cat video data improved tracking and enabled individual animals to be followed more accurately; their work also used BoT-SORT in the tracking pipeline.<a class="cite" href="bibliography.html#ref3">[3]</a> This is useful evidence that a general detector may need pet-specific data when animals look similar or multiple animals appear together.</p>
+
+<h3>How a tracker works at a high level</h3>
+<p>A tracker receives detections from the current frame and compares them with tracks from earlier frames. Different trackers use different combinations of motion prediction, overlap, confidence, and visual appearance. The goal is to associate a new detection with the correct existing track.</p>
+<div class="grid-2">
+<div class="card"><h4>ByteTrack</h4><p>Associates detections across frames and is designed to use both high- and lower-confidence detections during matching. It is useful when an object becomes harder to see for a short time.</p></div>
+<div class="card"><h4>BoT-SORT</h4><p>Combines motion and appearance information. It can be helpful in multi-object scenes where identity switches are a concern.</p></div>
+</div>
+
+<h3>Example tracking logic</h3>
+<pre><code># simplified pseudocode
+for frame in video:
+    detections = detector(frame)
+    tracks = tracker.update(detections)
+
+    for track in tracks:
+        pet_id = track.id
+        box = track.bounding_box
+        save_position(pet_id, box)</code></pre>
+<p>The important new variable is <span class="inline-code">pet_id</span>. Once the system has an identity, it can store a short history for each pet:</p>
+<pre><code>history[3] = [
+    (time=0.0, x=205, y=320),
+    (time=0.1, x=219, y=316),
+    (time=0.2, x=236, y=309)
+]</code></pre>
+<p>This history supports zone-entry timing, movement analysis, and behavior recognition.</p>
+
+<h3>Detection vs. tracking comparison</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Question</th><th>Detection</th><th>Tracking</th></tr></thead>
+<tbody>
+<tr><td>Main purpose</td><td>Locate and classify an object in one frame</td><td>Maintain object identity across frames</td></tr>
+<tr><td>Typical output</td><td>Class, confidence, bounding box</td><td>Track ID, bounding box, trajectory/history</td></tr>
+<tr><td>Needed for restricted zones?</td><td>Yes, to find the pet</td><td>Yes, to measure entry, exit, and dwell time reliably</td></tr>
+<tr><td>Main failure example</td><td>Missed or false detection</td><td>ID switch or lost track</td></tr>
+</tbody></table></div>
+
+<div class="callout warning"><strong>Important:</strong> A detector seeing a dog inside a zone for one frame is not the same as knowing that the dog entered and stayed in the zone. Tracking turns isolated detections into a time-based event.</div>
+
+<h3>When would I use one tracker over another?</h3>
+<p>For a small home scene with one dog, a simple fast tracker may be enough. With multiple similar-looking pets, brief occlusion, or pets crossing each other's paths, appearance-aware tracking becomes more useful. The best choice also depends on the processing power available on the target device. For a mobile or edge system, speed and memory use matter in addition to tracking accuracy.</p>
+
+<div class="page-links"><a href="index.html">← Home</a><a href="restricted-area.html">Next: Restricted Area →</a></div>
+
+</main></div>
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+
+</body>
+</html>
