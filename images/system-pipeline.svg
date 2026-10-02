@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420">
+  <rect width="1200" height="420" fill="#f8fbfc"/>
+  <style>.t{font:700 24px Arial;fill:#17324d}.s{font:18px Arial;fill:#425766}.b{fill:#fff;stroke:#1b7f79;stroke-width:3}.a{stroke:#244b6e;stroke-width:4;marker-end:url(#m)}</style>
+  <defs><marker id="m" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#244b6e"/></marker></defs>
+  <rect class="b" x="45" y="145" rx="18" width="185" height="115"/><text class="t" x="137" y="188" text-anchor="middle">Video</text><text class="s" x="137" y="222" text-anchor="middle">indoor camera</text>
+  <rect class="b" x="285" y="145" rx="18" width="185" height="115"/><text class="t" x="377" y="188" text-anchor="middle">Detection</text><text class="s" x="377" y="222" text-anchor="middle">find the pet</text>
+  <rect class="b" x="525" y="145" rx="18" width="185" height="115"/><text class="t" x="617" y="188" text-anchor="middle">Tracking</text><text class="s" x="617" y="222" text-anchor="middle">keep a track ID</text>
+  <rect class="b" x="765" y="70" rx="18" width="205" height="115"/><text class="t" x="867" y="113" text-anchor="middle">Zone Analysis</text><text class="s" x="867" y="147" text-anchor="middle">inside polygon?</text>
+  <rect class="b" x="765" y="240" rx="18" width="205" height="115"/><text class="t" x="867" y="283" text-anchor="middle">Behavior</text><text class="s" x="867" y="317" text-anchor="middle">video over time</text>
+  <rect class="b" x="1020" y="145" rx="18" width="140" height="115"/><text class="t" x="1090" y="188" text-anchor="middle">Alert</text><text class="s" x="1090" y="222" text-anchor="middle">owner</text>
+  <line class="a" x1="230" y1="202" x2="285" y2="202"/><line class="a" x1="470" y1="202" x2="525" y2="202"/>
+  <line class="a" x1="710" y1="185" x2="765" y2="135"/><line class="a" x1="710" y1="220" x2="765" y2="285"/>
+  <line class="a" x1="970" y1="130" x2="1020" y2="185"/><line class="a" x1="970" y1="295" x2="1020" y2="225"/>
+  <text class="s" x="600" y="390" text-anchor="middle">Detection tells us where the pet is; tracking and temporal analysis add information across frames.</text>
+</svg>
