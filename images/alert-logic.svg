@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+  <rect width="1200" height="500" fill="#f8fbfc"/>
+  <style>.h{font:700 24px Arial;fill:#17324d}.t{font:18px Arial;fill:#405565}.b{fill:#fff;stroke:#1b7f79;stroke-width:3}.d{fill:#fff8e7;stroke:#f4b942;stroke-width:3}.a{stroke:#244b6e;stroke-width:4;marker-end:url(#m)}</style>
+  <defs><marker id="m" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#244b6e"/></marker></defs>
+  <rect class="b" x="70" y="185" rx="16" width="190" height="100"/><text class="h" x="165" y="225" text-anchor="middle">Track ID #3</text><text class="t" x="165" y="255" text-anchor="middle">pet position</text>
+  <rect class="d" x="330" y="185" rx="16" width="210" height="100"/><text class="h" x="435" y="225" text-anchor="middle">Inside zone?</text><text class="t" x="435" y="255" text-anchor="middle">point in polygon</text>
+  <rect class="d" x="610" y="185" rx="16" width="210" height="100"/><text class="h" x="715" y="225" text-anchor="middle">Dwell ≥ 2 s?</text><text class="t" x="715" y="255" text-anchor="middle">avoid quick pass</text>
+  <rect class="b" x="890" y="185" rx="16" width="230" height="100"/><text class="h" x="1005" y="225" text-anchor="middle">Send alert</text><text class="t" x="1005" y="255" text-anchor="middle">timestamp + pet ID</text>
+  <line class="a" x1="260" y1="235" x2="330" y2="235"/><line class="a" x1="540" y1="235" x2="610" y2="235"/><line class="a" x1="820" y1="235" x2="890" y2="235"/>
+  <text class="t" x="600" y="395" text-anchor="middle">Adding tracking and dwell time makes the rule more stable than checking a single detection.</text>
+</svg>

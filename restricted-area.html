@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restricted Area | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+
+<div class="page-shell"><main>
+<span class="kicker">Part 2</span>
+<h2>Restricted-Area Detection</h2>
+
+<p class="lead">
+YOLO does not automatically know that a kitchen, doorway, sofa, or part of a room is
+“restricted.” The application must define that spatial rule and then compare the
+tracked pet's position with the region.
+</p>
+
+<h3>1. Define the Restricted Area</h3>
+<p>
+A restricted area can be represented as a polygon in image coordinates.
+A general implementation may allow the user to click several points and create an arbitrary polygon.
+In my video demonstration, I use a simpler <strong>rectangular polygon</strong> so the region
+is easy to reproduce and explain.
+</p>
+
+<figure>
+<img src="images/restricted-zone.svg" alt="Dog bounding box and polygon restricted area with bottom-center point">
+<figcaption>
+Figure 3. A restricted region is represented in image coordinates. The bottom-center of the
+dog's bounding box is used as an approximate position on the floor. Diagram created by the author.
+</figcaption>
+</figure>
+
+<h4>Rectangle used in my notebook</h4>
+<p>
+Instead of hard-coding pixel values for one video resolution, my notebook defines the four
+boundaries as percentages of the frame.
+</p>
+
+<pre><code>ZONE_LEFT = 0.48
+ZONE_TOP = 0.08
+ZONE_RIGHT = 0.76
+ZONE_BOTTOM = 0.99
+
+restricted_polygon = np.array([
+    [int(width * ZONE_LEFT),  int(height * ZONE_TOP)],
+    [int(width * ZONE_RIGHT), int(height * ZONE_TOP)],
+    [int(width * ZONE_RIGHT), int(height * ZONE_BOTTOM)],
+    [int(width * ZONE_LEFT),  int(height * ZONE_BOTTOM)]
+], dtype=np.int32)</code></pre>
+
+<h3>2. Detect and Track the Dog</h3>
+<p>
+My final demo uses <strong>YOLO</strong> for detection and <strong>ByteTrack</strong> to maintain
+the dog's identity across frames.
+</p>
+
+<pre><code>result = model.track(
+    frame,
+    persist=True,
+    tracker="bytetrack.yaml",
+    classes=[DOG_CLASS_ID],
+    conf=0.25,
+    verbose=False
+)[0]</code></pre>
+
+<p>
+Filtering to the dog class keeps the demonstration focused on pet monitoring instead of tracking
+every COCO object in the scene.
+</p>
+
+<h3>3. Represent the Dog's Position</h3>
+<p>
+A bounding box covers the dog's entire body. For a region drawn on the floor, I use the
+<strong>bottom-center</strong> of the box as a simple estimate of the dog's ground position.
+</p>
+
+<pre><code>x1, y1, x2, y2 = map(int, box)
+
+pet_point = (
+    int((x1 + x2) / 2),
+    int(y2)
+)</code></pre>
+
+<div class="callout">
+<strong>Why bottom-center?</strong> The center of the box can lie in the middle of the dog's body.
+The bottom-center is usually closer to the floor location that should be compared with a room zone.
+It is still an approximation; segmentation or pose estimation could provide a more precise contact point.
+</div>
+
+<h3>4. Point-in-Polygon Test</h3>
+<p>
+OpenCV's point-in-polygon test checks whether the dog's representative point is inside,
+outside, or on the boundary of the polygon.
+</p>
+
+<pre><code>zone_test = cv2.pointPolygonTest(
+    restricted_polygon,
+    pet_point,
+    False
+)
+
+inside = zone_test &gt;= 0</code></pre>
+
+<p>
+If <span class="inline-code">inside</span> is true, the same tracked dog has entered the restricted region.
+</p>
+
+<h3>5. Existing Implementation: Ultralytics RegionCounter</h3>
+<div class="existing-implementation">
+<p>
+An existing implementation related to this idea is Ultralytics RegionCounter.
+It combines object detection, object tracking, and user-defined regions. This is useful as a
+reference implementation because it shows that zone reasoning is a layer built on top of
+detection and tracking rather than a special “restricted area” object class.
+</p>
+
+<div class="pipeline-row">
+    <div class="mini-step">Video</div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-step">Detection</div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-step">Tracking</div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-step">Region Test</div>
+</div>
+
+<p class="small-note">
+Existing implementation reference:
+<a href="https://docs.ultralytics.com/guides/region-counting/" target="_blank" rel="noopener">
+Ultralytics Region Counting Documentation
+</a>
+</p>
+</div>
+
+<h3>6. My Extension: Dwell Time</h3>
+<p>
+A single-frame zone crossing may be too brief to matter. My implementation therefore records the
+time when each tracked dog enters the region and measures how long that same track remains inside.
+</p>
+
+<pre><code>if inside:
+    if track_id not in entered_at:
+        entered_at[track_id] = current_video_time
+
+    dwell_time = (
+        current_video_time
+        - entered_at[track_id]
+    )
+else:
+    entered_at.pop(track_id, None)
+    dwell_time = 0.0</code></pre>
+
+<p>The demo triggers an alert only after the dog has remained inside for two seconds:</p>
+
+<pre><code>ALERT_AFTER_SECONDS = 2.0
+
+if inside and dwell_time &gt;= ALERT_AFTER_SECONDS:
+    show_alert()</code></pre>
+
+<h3>7. My Video Demonstration</h3>
+<p>
+The following demonstration connects the complete pipeline:
+<strong>YOLO detection → ByteTrack ID → restricted rectangle → bottom-center test → dwell time → alert.</strong>
+</p>
+
+<div class="video-card">
+    <video controls preload="metadata" poster="images/demo-preview.png">
+        <source src="videos/demo.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <p class="video-caption">
+        Demo created for this tutorial. The dog is tracked across frames, the red rectangle represents
+        the restricted area, and an alert can be shown after the dwell-time threshold.
+    </p>
+</div>
+
+<div class="grid-2 demo-explanation">
+    <div class="card"><h4>1. Detect</h4><p>YOLO finds the dog in each frame.</p></div>
+    <div class="card"><h4>2. Track</h4><p>ByteTrack maintains the Dog ID across frames.</p></div>
+    <div class="card"><h4>3. Check</h4><p>The dog's bottom-center point is tested against the restricted polygon.</p></div>
+    <div class="card"><h4>4. Alert</h4><p>The system measures dwell time and displays an alert after the threshold.</p></div>
+</div>
+
+<p>
+<a class="button" href="notebooks/dog_restricted_area_demo.ipynb" download>
+Download the Jupyter Notebook Used for the Demo
+</a>
+</p>
+
+<div class="callout warning">
+<strong>Important implementation detail:</strong> This is why the project goes beyond YOLO.
+YOLO detects the dog, ByteTrack supplies persistent identity, OpenCV supplies the geometric
+inside/outside test, and the application supplies the dwell-time alert rule.
+</div>
+
+<h3>8. Limitations of the Demo</h3>
+<ul class="checklist">
+<li>The camera should remain fixed after the restricted region is defined.</li>
+<li>Occlusion can cause the dog detector or tracker to lose the animal temporarily.</li>
+<li>The bottom-center point is only an approximation of the dog's position on the floor.</li>
+<li>A fixed two-second threshold may not be appropriate for every home or restricted area.</li>
+<li>Performance may change with lighting, camera angle, distance, and dog appearance.</li>
+</ul>
+
+<div class="page-links">
+<a href="tracking.html">← Detection &amp; Tracking</a>
+<a href="behavior.html">Next: Behavior Recognition →</a>
+</div>
+</main></div>
+
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+</body>
+</html>

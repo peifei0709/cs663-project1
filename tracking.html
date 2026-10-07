@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detection & Tracking | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+
+<div class="page-shell"><main>
+<span class="kicker">Part 1</span>
+<h2>Pet Detection and Tracking</h2>
+
+<p class="lead">
+Detection answers <em>“Where is the pet in this image?”</em> Tracking answers
+<em>“Is this the same pet I saw in the previous video frames?”</em>
+The two ideas are related, but they solve different problems.
+</p>
+
+<h3>1. Object Detection</h3>
+<p>
+An object detector predicts a class label, a confidence score, and a bounding box.
+For pet monitoring, the detector may return a result such as <strong>dog 94%</strong>
+together with the coordinates of the box around the dog.
+</p>
+
+<figure>
+<img src="images/detection-vs-tracking.svg" alt="Comparison between object detection and object tracking">
+<figcaption>
+Figure 2. Detection locates an object in individual frames, while tracking links detections
+across time and maintains an identity. Diagram created by the author.
+</figcaption>
+</figure>
+
+<h3>2. Try Animal Detection</h3>
+<div class="callout">
+<strong>Interactive example:</strong> Upload a dog or cat photo and run a browser-based detector.
+This activity uses TensorFlow.js COCO-SSD because it can run directly inside GitHub Pages.
+It demonstrates the basic outputs of object detection: <strong>class, confidence, and bounding box</strong>.
+My video demonstration later uses YOLO instead.
+</div>
+
+<div class="detector-card">
+    <div class="detector-toolbar">
+        <label class="file-picker">
+            <span>Choose a dog or cat photo</span>
+            <input id="pet-upload" type="file" accept="image/*">
+        </label>
+        <button id="run-detection" type="button" disabled>Run animal detection</button>
+    </div>
+
+    <div id="detection-status" class="demo-status">
+        Choose a photo to begin. The model loads when you press “Run animal detection.”
+    </div>
+
+    <div class="detector-stage">
+        <img id="detector-image" alt="Uploaded image for animal detection" hidden>
+        <canvas id="detector-canvas" aria-label="Animal detection result"></canvas>
+        <div class="detector-placeholder" id="detector-placeholder">
+            Your image and detection boxes will appear here.
+        </div>
+    </div>
+</div>
+
+<h4>What this example does — and does not do</h4>
+<div class="grid-2">
+    <div class="card">
+        <h4>It does</h4>
+        <p>Detect supported animals in one image and show the predicted class, confidence score, and bounding box.</p>
+    </div>
+    <div class="card">
+        <h4>It does not</h4>
+        <p>Maintain an identity over time. A single image has no previous or next frame, so there is nothing to track.</p>
+    </div>
+</div>
+
+<div class="callout warning">
+<strong>Key transition:</strong> If I run a detector on 100 video frames, I may receive 100 separate
+dog detections. A tracker is needed to connect them and say that they belong to the same
+<strong>Dog ID</strong>.
+</div>
+
+<h3>3. Why Tracking Is Necessary</h3>
+<p>
+Wang and Mariano combined a YOLOv8-based detector with ByteTrack for multi-object tracking,
+showing the common design pattern of using a detector first and a tracker second.
+<a class="cite" href="bibliography.html#ref2">[2]</a>
+Tracking becomes important for restricted-area monitoring because the system must know
+when one pet enters a region, how long that same pet remains there, and when it leaves.
+</p>
+
+<p>
+Research on domestic cats also demonstrates the difficulty of keeping stable identities when
+animals look similar or overlap. Nakajima and colleagues used fine-tuned object detection
+and BoT-SORT in a domestic-cat tracking pipeline.
+<a class="cite" href="bibliography.html#ref3">[3]</a>
+</p>
+
+<h3>4. Tracking in My Video Demo</h3>
+<p>
+For my demonstration, I use <strong>YOLO for dog detection</strong> and
+<strong>ByteTrack for tracking</strong>. The important output added by the tracker is
+a persistent ID.
+</p>
+
+<pre><code>result = model.track(
+    frame,
+    persist=True,
+    tracker="bytetrack.yaml",
+    classes=[DOG_CLASS_ID],
+    conf=0.25,
+    verbose=False
+)[0]</code></pre>
+
+<p>
+The <span class="inline-code">persist=True</span> setting tells the tracking workflow that the
+current frame follows the previous frame, so track identities can persist across the video.
+</p>
+
+<h3>5. Detection vs. Tracking</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr><th>Question</th><th>Detection</th><th>Tracking</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>Main purpose</td>
+<td>Locate and classify an object in one frame</td>
+<td>Maintain the object's identity across frames</td>
+</tr>
+<tr>
+<td>Typical output</td>
+<td>Class, confidence, bounding box</td>
+<td>Track ID, box, and movement history</td>
+</tr>
+<tr>
+<td>Example in my project</td>
+<td>YOLO detects a dog</td>
+<td>ByteTrack keeps it as Dog ID #1</td>
+</tr>
+<tr>
+<td>Main failure</td>
+<td>Missed or false detection</td>
+<td>Lost track or ID switch</td>
+</tr>
+</tbody>
+</table></div>
+
+<h3>6. Simplified Tracking Logic</h3>
+<pre><code>for frame in video:
+    detections = detector(frame)
+    tracks = tracker.update(detections)
+
+    for track in tracks:
+        dog_id = track.id
+        box = track.bounding_box
+        save_position(dog_id, box)</code></pre>
+
+<p>
+Once the system has a stable ID, the next step is spatial reasoning:
+<strong>Is Dog ID #1 inside the restricted area?</strong>
+</p>
+
+<div class="page-links">
+<a href="index.html">← Home</a>
+<a href="restricted-area.html">Next: Restricted Area →</a>
+</div>
+</main></div>
+
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
+<script src="js/site.js"></script>
+<script src="js/pet-detection.js"></script>
+</body>
+</html>

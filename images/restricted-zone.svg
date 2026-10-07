@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560">
+  <rect width="1200" height="560" fill="#f8fbfc"/>
+  <style>.h{font:700 28px Arial;fill:#17324d}.t{font:19px Arial;fill:#405565}.zone{fill:#f7dddd;stroke:#b83a3a;stroke-width:5;stroke-dasharray:12 8}.box{fill:none;stroke:#1b7f79;stroke-width:5}.p{fill:#b83a3a}.lab{font:700 19px Arial;fill:#8e2e2e}</style>
+  <text class="h" x="600" y="50" text-anchor="middle">Polygon Restricted Area and Pet Position</text>
+  <rect x="90" y="90" width="1020" height="380" rx="20" fill="#e6eef2"/>
+  <polygon class="zone" points="690,140 1020,120 1060,410 660,430"/><text class="lab" x="780" y="175">Restricted area</text>
+  <text x="350" y="300" font-size="86">🐕</text><rect class="box" x="300" y="190" width="210" height="190"/>
+  <circle class="p" cx="405" cy="380" r="12"/><text class="t" x="270" y="415">bottom-center point</text>
+  <line x1="420" y1="380" x2="650" y2="380" stroke="#244b6e" stroke-width="4" marker-end="url(#m)"/>
+  <defs><marker id="m" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#244b6e"/></marker></defs>
+  <text class="t" x="600" y="520" text-anchor="middle">A point-in-polygon test can determine whether the tracked pet has entered the virtual zone.</text>
+</svg>

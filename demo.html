@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz | CS663 Project 1</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+<h1>Computer Vision for Pet Behavior Monitoring and Restricted-Area Detection</h1>
+<p>CS663 Project 1 &mdash; Fei Pei</p>
+</header>
+
+<div class="nav-wrap"><nav aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="tracking.html">Detection &amp; Tracking</a>
+<a href="restricted-area.html">Restricted Area</a>
+<a href="behavior.html">Behavior Recognition</a>
+<a href="limitations.html">Challenges</a>
+<a href="demo.html">Quiz</a>
+<a href="bibliography.html">References</a>
+</nav></div>
+
+<div class="page-shell"><main>
+<span class="kicker">Interactive Activity</span>
+<h2>Knowledge Check</h2>
+
+<p class="lead">
+Use this short quiz to review the main ideas from the tutorial.
+After you submit, every question shows an explanation. If an answer is wrong, the explanation
+reviews the concept instead of only displaying a score.
+</p>
+
+<form id="quiz-form">
+<div class="quiz-question" data-question="q1">
+<p>1. What is the main difference between object detection and object tracking?</p>
+<label><input type="radio" name="q1" value="a"> Detection maintains an ID across frames, while tracking only classifies one image.</label>
+<label><input type="radio" name="q1" value="b"> Tracking maintains an object's identity across video frames.</label>
+<label><input type="radio" name="q1" value="c"> Tracking never uses bounding boxes.</label>
+<div class="answer-feedback" id="feedback-q1" aria-live="polite"></div>
+</div>
+
+<div class="quiz-question" data-question="q2">
+<p>2. In the restricted-area demo, what defines the restricted area?</p>
+<label><input type="radio" name="q2" value="a"> A special YOLO class called “restricted area.”</label>
+<label><input type="radio" name="q2" value="b"> A polygon defined in image coordinates.</label>
+<label><input type="radio" name="q2" value="c"> The dog's confidence score.</label>
+<div class="answer-feedback" id="feedback-q2" aria-live="polite"></div>
+</div>
+
+<div class="quiz-question" data-question="q3">
+<p>3. Why does the demo use the bottom-center of the dog's bounding box?</p>
+<label><input type="radio" name="q3" value="a"> It is a simple approximation of the dog's position on the floor.</label>
+<label><input type="radio" name="q3" value="b"> It automatically recognizes the dog's behavior.</label>
+<label><input type="radio" name="q3" value="c"> It increases the video frame rate.</label>
+<div class="answer-feedback" id="feedback-q3" aria-live="polite"></div>
+</div>
+
+<div class="quiz-question" data-question="q4">
+<p>4. Why is a dwell-time threshold useful for a restricted-area alert?</p>
+<label><input type="radio" name="q4" value="a"> It makes the bounding box larger.</label>
+<label><input type="radio" name="q4" value="b"> It can reduce alerts caused by a very brief zone crossing.</label>
+<label><input type="radio" name="q4" value="c"> It replaces the object tracker.</label>
+<div class="answer-feedback" id="feedback-q4" aria-live="polite"></div>
+</div>
+
+<div class="quiz-question" data-question="q5">
+<p>5. Why is YOLO alone not enough to recognize many pet behaviors?</p>
+<label><input type="radio" name="q5" value="a"> YOLO cannot process images.</label>
+<label><input type="radio" name="q5" value="b"> Many behaviors depend on movement and temporal information across multiple frames.</label>
+<label><input type="radio" name="q5" value="c"> YOLO can only detect cats.</label>
+<div class="answer-feedback" id="feedback-q5" aria-live="polite"></div>
+</div>
+
+<button type="submit">Check my answers</button>
+<div class="quiz-result" id="quiz-result" aria-live="polite"></div>
+</form>
+
+<h3>Final Review</h3>
+<div class="callout">
+<strong>Remember the system pipeline:</strong>
+detect the pet → maintain its tracking ID → estimate its position →
+compare the position with a restricted region → measure dwell time →
+trigger an alert if needed.
+Behavior recognition is a separate problem that may require temporal models.
+</div>
+
+<div class="page-links">
+<a href="limitations.html">← Challenges</a>
+<a href="bibliography.html">Next: References →</a>
+</div>
+</main></div>
+
+<footer>CS663 Computer Vision &mdash; Project 1 Research Tutorial &bull; Fei Pei</footer>
+<script src="js/site.js"></script>
+<script src="js/demo.js"></script>
+</body>
+</html>
